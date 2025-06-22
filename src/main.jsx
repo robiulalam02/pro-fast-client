@@ -6,9 +6,10 @@ import { RouterProvider } from 'react-router'
 import AnimateOnSlide from './AnimateOnSlide/AnimateOnSlide.jsx'
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import AuthProvider from './Contexts/AuthContext/AuthProvider.jsx'
 
 AOS.init({
-  duration: 1500,
+  duration: 1000,
   easing: 'ease',
   once: true,
   mirror: false,
@@ -17,6 +18,8 @@ AOS.init({
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
   </StrictMode>,
 )

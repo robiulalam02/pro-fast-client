@@ -2,8 +2,16 @@ import React from 'react';
 import { Outlet } from 'react-router';
 import Navbar from '../Pages/Shared/Navbar/Navbar'
 import Footer from '../Pages/Shared/Footer/Footer';
+import useAuth from '../Hooks/useAuth';
+import Loader from '../components/Loader/Loader';
 
 const MainLayout = () => {
+    const {user} = useAuth();
+
+    // if (!user) {
+    //     return <Loader />
+    // }
+    
     return (
         <div className='max-w-screen-xl mx-auto py-10'>
             <Navbar />

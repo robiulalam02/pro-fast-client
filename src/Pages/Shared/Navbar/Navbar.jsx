@@ -1,10 +1,13 @@
 import React from 'react';
 import Logo from '../ProfastLogo/Logo';
 import { NavLink, useNavigate } from 'react-router';
+import useAuth from '../../../Hooks/useAuth';
 
 const Navbar = () => {
 
+    const { user, signOutUser } = useAuth();
     const navigate = useNavigate();
+    console.log(user);
 
     const navItems = <>
         <li><NavLink to="/services">Services</NavLink></li>
@@ -25,7 +28,7 @@ const Navbar = () => {
                         className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
                         {navItems}
                     </ul>
-                </div>  
+                </div>
                 <Logo />
             </div>
             <div className="navbar-center hidden lg:flex">
@@ -33,9 +36,16 @@ const Navbar = () => {
                     {navItems}
                 </ul>
             </div>
-            <div className="navbar-end flex items-center gap-4">
-                <button onClick={()=> navigate('/auth/login')} className='border border-secondary px-6 py-2 rounded-md bg-base-100 font-semibold'>Sign In</button>
-                <button className='border border-secondary px-6 py-2 rounded-md bg-secondary font-semibold'>Be a Rider</button>
+            <div className="navbar-end">
+                {
+                    user ?
+                        <button onClick={signOutUser} className='border border-secondary px-6 py-2 rounded-md bg-secondary font-semibold'>Logout</button>
+                        :
+                        <div className="flex items-center gap-4">
+                            <button onClick={() => navigate('/auth/login')} className='border border-secondary px-6 py-2 rounded-md bg-base-100 font-semibold'>Sign In</button>
+                            <button className='border border-secondary px-6 py-2 rounded-md bg-secondary font-semibold'>Be a Rider</button>
+                        </div>
+                }
             </div>
         </div>
     );
