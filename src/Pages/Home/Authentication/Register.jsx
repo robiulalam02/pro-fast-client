@@ -1,12 +1,19 @@
-import React, { use, useState } from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { VscEye, VscEyeClosed } from 'react-icons/vsc';
-import { NavLink } from 'react-router';
+import { NavLink, useNavigate } from 'react-router';
 import useAuth from '../../../Hooks/useAuth';
+import axios from 'axios';
+import Swal from 'sweetalert2';
+import { imageUploadAPI } from '../../../API/utils';
+import Spinner from '../../../components/Loader/Spinner';
+import toast from 'react-hot-toast';
 
 const Register = () => {
-    const {userSignUp, googleSignIn} = useAuth();
+    const { userSignUp, googleSignIn, updateUserProfile } = useAuth();
     const [showPass, setShowPass] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     const {
         register,
@@ -14,28 +21,50 @@ const Register = () => {
         formState: { errors },
     } = useForm()
 
-    const onSubmit = (data) => {
+    const onSubmit = async (data) => {
         // sign up new user via firebase
 
-        const {name, photo, email, password} = data;
+        const { name, photo, email, password } = data;
 
-        userSignUp(email, password)
-        .then(res=>{
-            console.log(res);
-        })
-        .catch(err=>{
-            console.log(err.message);
-        })
+        try {
+            setLoading(true);
 
+            const imageURL = await imageUploadAPI(photo);
+
+            try {
+                if (imageURL) {
+                    const res = await userSignUp(email, password);
+                    if (res.user) {
+                        updateUserProfile(name, imageURL)
+                        Swal.fire({
+                            position: "center",
+                            icon: "success",
+                            title: "user registration successfull",
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                        console.log('current user: ', res.user.email);
+                        navigate('/')
+                    }
+                }
+            } catch {
+                toast.error('user already registered');
+            }
+
+        } catch {
+            toast.error('image upload failed');
+        } finally {
+            setLoading(false);
+        }
     }
 
     const handleGoogleSignIn = () => {
         // sign in using google provider
 
         googleSignIn()
-        .then(res=>{
-            console.log(res);
-        })
+            .then(res => {
+                console.log(res);
+            })
     }
 
     return (
@@ -59,14 +88,14 @@ const Register = () => {
                     </div>
 
                     {/* Photo URL */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">Photo URL</label>
-                        <input
-                            type="url"
-                            className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
-                            placeholder="Enter photo URL"
+
+                    <div class="max-w-md mx-auto">
+                        <label class="text-base text-slate-900 font-medium mb-3 block">Upload file</label>
+                        <input type="file"
+                            class="w-full text-slate-500 font-medium text-sm bg-white border border-gray-300 file:cursor-pointer cursor-pointer file:border-0 file:py-3 file:px-4 file:mr-4 file:bg-gray-100 file:hover:bg-gray-200 file:text-slate-500 rounded-xl"
                             {...register("photo")}
                         />
+                        <p class="text-xs text-slate-500 mt-2">PNG, JPG SVG, WEBP, and GIF are Allowed.</p>
                     </div>
 
                     {/* Email */}
@@ -84,7 +113,7 @@ const Register = () => {
                     <div className='relative'>
                         <label className="block text-sm font-medium text-gray-700">Password</label>
                         <input
-                            type={showPass? 'text' : 'password'}
+                            type={showPass ? 'text' : 'password'}
                             className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                             placeholder="Create a password"
                             {...register('password', {
@@ -95,12 +124,12 @@ const Register = () => {
                                 }
                             })}
                         />
-                        <button onClick={()=> setShowPass(!showPass)} type='button' className='absolute top-8 right-4'>
+                        <button onClick={() => setShowPass(!showPass)} type='button' className='absolute top-8 right-4'>
                             {
-                                showPass ? 
-                                <VscEye />
-                                :
-                                <VscEyeClosed />
+                                showPass ?
+                                    <VscEye />
+                                    :
+                                    <VscEyeClosed />
                             }
                         </button>
                     </div>
@@ -134,7 +163,12 @@ const Register = () => {
                         type="submit"
                         className="w-full py-2 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition"
                     >
-                        Register
+                        {
+                            loading ?
+                                <Spinner />
+                                :
+                                'Register'
+                        }
                     </button>
                 </form>
 

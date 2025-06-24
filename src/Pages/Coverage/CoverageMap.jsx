@@ -3,6 +3,7 @@ import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import { MapController } from './Coverage';
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -11,7 +12,7 @@ L.Icon.Default.mergeOptions({
     shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
 });
 
-const CoverageMap = ({ serviceLocations }) => {
+const CoverageMap = ({ serviceLocations, selectedLocation }) => {
     return (
         <div className="h-[500px] rounded-lg overflow-hidden shadow-lg border">
             <MapContainer
@@ -25,10 +26,14 @@ const CoverageMap = ({ serviceLocations }) => {
                     attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
+
+                {selectedLocation && <MapController location={selectedLocation} />}
+
                 {serviceLocations.map((loc, index) => (
                     <Marker key={index} position={[loc.latitude, loc.longitude]}>
                         <Popup>
-                            Service Available in <strong>{loc.city}</strong>
+                            <p>Service Available in {loc.city}:</p>
+                            <strong>{loc.covered_area.join(',')}</strong>
                         </Popup>
                     </Marker>
                 ))}

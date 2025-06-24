@@ -4,12 +4,15 @@ import { NavLink, useNavigate } from 'react-router';
 import { useForm } from 'react-hook-form';
 import { VscEye, VscEyeClosed } from 'react-icons/vsc';
 import useAuth from '../../../Hooks/useAuth';
+import Swal from 'sweetalert2';
+import Spinner from '../../../components/Loader/Spinner';
 
 const Login = () => {
 
-    const { googleSignIn } = useAuth();
+    const { googleSignIn, userSignIn } = useAuth();
     const [showPass, setShowPass] = useState(false);
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
 
     const {
         register,
@@ -17,17 +20,47 @@ const Login = () => {
         formState: { errors }
     } = useForm()
 
-    const onSubmit = data => {
+    const onSubmit = async (data) => {
         console.log(data);
+        const { email, password } = data;
+
+        // sign in user using firebase
+        try {
+            setLoading(true);
+            const res = userSignIn(email, password)
+
+            if (res.user) {
+                Swal.fire({
+                    position: "center",
+                    icon: "success",
+                    title: "user registration successfull",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                console.log('current user: ', res.user.email);
+                navigate('/')
+            }
+        } catch (error) {
+            alert(error.message);
+        } finally {
+            setLoading(false);
+        }
     }
 
     const handleGoogleSignIn = () => {
         // sign in using google provider
 
-        googleSignIn()
-            .then(() => {
-                navigate('/')
-            })
+        try {
+            setLoading(true);
+            googleSignIn()
+                .then(() => {
+                    navigate('/')
+                })
+        } catch {
+            alert('user login failed, try again later!')
+        } finally {
+            setLoading(false);
+        }
     }
 
     return (
@@ -93,7 +126,12 @@ const Login = () => {
                         type="submit"
                         className="w-full py-2 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition"
                     >
-                        Login
+                        {
+                            loading ?
+                                <Spinner />
+                                :
+                                'login'
+                        }
                     </button>
                 </form>
 

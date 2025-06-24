@@ -7,6 +7,7 @@ import AnimateOnSlide from './AnimateOnSlide/AnimateOnSlide.jsx'
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import AuthProvider from './Contexts/AuthContext/AuthProvider.jsx'
+import { Toaster } from 'react-hot-toast'
 
 AOS.init({
   duration: 1000,
@@ -19,6 +20,7 @@ AOS.init({
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <AuthProvider>
+      <Toaster />
       <RouterProvider router={router} />
     </AuthProvider>
   </StrictMode>,

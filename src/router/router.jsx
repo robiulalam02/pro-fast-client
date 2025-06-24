@@ -5,6 +5,7 @@ import Authentication from "../Layouts/Authentication";
 import Login from "../Pages/Home/Authentication/Login";
 import Register from "../Pages/Home/Authentication/Register";
 import Coverage from "../Pages/Coverage/Coverage";
+import AddParcel from "../Pages/AddParcel/AddParcel";
 
 export const router = createBrowserRouter([
     {
@@ -17,7 +18,13 @@ export const router = createBrowserRouter([
             },
             {
                 path: '/coverage',
-                Component: Coverage
+                Component: Coverage,
+                loader: ()=> fetch('servicelocation.json')
+            },
+            {
+                path: '/pricing',
+                Component: AddParcel,
+                loader: ()=> fetch('servicelocation.json')
             }
         ]
     },
@@ -34,5 +41,6 @@ export const router = createBrowserRouter([
                 Component: Register
             },
         ]
-    }
+    },
+
 ]);

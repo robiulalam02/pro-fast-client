@@ -6,11 +6,11 @@ import useAuth from '../Hooks/useAuth';
 import Loader from '../components/Loader/Loader';
 
 const MainLayout = () => {
-    const {user} = useAuth();
+    const {loading} = useAuth();
 
-    // if (!user) {
-    //     return <Loader />
-    // }
+    if (loading) {
+        return <Loader />
+    }
     
     return (
         <div className='max-w-screen-xl mx-auto py-10'>
