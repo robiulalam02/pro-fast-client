@@ -6,10 +6,12 @@ import { useForm } from 'react-hook-form';
 import { calculateCost, generateTrackingId } from '../../API/utils';
 import Swal from 'sweetalert2';
 import useAuth from '../../Hooks/useAuth';
+import useAxiosSecure from '../../Hooks/useAxiosSecure';
 
 const AddParcel = () => {
-    const {user} = useAuth();
+    const { user } = useAuth();
     const wareHouseData = useLoaderData();
+    const axiosSecure = useAxiosSecure();
 
     const {
         register,
@@ -65,10 +67,17 @@ const AddParcel = () => {
         });
 
         if (result.isConfirmed) {
-            // Simulate success
-            Swal.fire("Success!", "Parcel has been submitted!", "success");
-            console.log("Submitted Data:", { ...data, cost, createdBy: user?.email, creationTime: new Date().toISOString(), delivery_status: "not-collected", payment_status: "unpaid", tracking_id: generateTrackingId() });
-            reset();
+            const finalData = { ...data, cost, createdBy: user?.email, creationTime: new Date().toISOString(), deliveryStatus: "not-collected", paymentStatus: "unpaid", trackingId: generateTrackingId() }
+            // add parcel data to db
+            axiosSecure.post('/parcels', finalData)
+                .then(res => {
+                    console.log(res.data);
+                    if (res.data.insertedId) {
+                        Swal.fire("Success!", "Parcel has been submitted!", "success");
+                        reset();
+                    }
+                })
+
         }
 
     };
