@@ -1,15 +1,44 @@
 import React from 'react';
 import { NavLink, Outlet } from 'react-router';
 import Logo from '../Pages/Shared/ProfastLogo/Logo';
+import "./Styles/dashboard.css"
+import { BiHomeAlt2, BiPackage } from 'react-icons/bi';
+import { BsCashCoin } from 'react-icons/bs';
 
 
 const Dashboard = () => {
     const links = <>
-    <Logo />
-    <li><NavLink to="/dashboard">My Parcels</NavLink></li>
-    <li><NavLink to="/myparcels">My Parcels</NavLink></li>
-    <li><NavLink to="/myparcels">My Parcels</NavLink></li>
+        <Logo />
+        <li className='mt-5'>
+            <NavLink
+                to="/dashboard"
+                end
+                className={({ isActive }) => isActive ? "active flex items-center gap-2" : "flex items-center gap-2"}
+            >
+                <BiHomeAlt2 className="text-lg" />
+                Dashboard Home
+            </NavLink>
+        </li>
+        <li className='mt-5'>
+            <NavLink
+                to="/dashboard/myparcels"
+                className={({ isActive }) => isActive ? "active flex items-center gap-2" : "flex items-center gap-2"}
+            >
+                <BiPackage className="text-lg" />
+                My Parcels
+            </NavLink>
+        </li>
+        <li className='mt-5'>
+            <NavLink
+                to="/dashboard/paymentHistory"
+                className={({ isActive }) => isActive ? "active flex items-center gap-2" : "flex items-center gap-2"}
+            >
+                <BsCashCoin className="text-lg" />
+                Payment History
+            </NavLink>
+        </li>
     </>
+
     return (
         <div className="drawer lg:drawer-open">
             <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
@@ -38,9 +67,9 @@ const Dashboard = () => {
                 {/* Page content here */}
                 <Outlet />
             </div>
-            <div className="drawer-side">
+            <div className="drawer-side bg-base-100 ">
                 <label htmlFor="my-drawer-2" aria-label="close sidebar" className="drawer-overlay"></label>
-                <ul className="menu bg-base-200 text-base-content min-h-full w-80 p-4">
+                <ul className="menu text-base-content min-h-full w-80 p-4">
                     {/* Sidebar content here */}
                     {links}
                 </ul>
